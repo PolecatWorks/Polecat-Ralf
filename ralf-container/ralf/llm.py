@@ -1,20 +1,20 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from ralf.settings import settings
+from ralf.config import RalfConfig
 
-def get_chain():
+def get_chain(config: RalfConfig):
     """
     Creates and returns a simple LangChain chain for answering questions.
     """
-    if not settings.GOOGLE_API_KEY:
+    if not config.aiclient.google_api_key:
         raise ValueError("GOOGLE_API_KEY environment variable is not set.")
 
     # Initialize the Google Gemini model
     # Using gemini-pro as a safe default, or user could specify via env vars if we expanded settings
     llm = ChatGoogleGenerativeAI(
-        model="gemini-pro",
-        google_api_key=settings.GOOGLE_API_KEY
+        model=config.aiclient.model or "gemini-pro",
+        google_api_key=config.aiclient.google_api_key.get_secret_value()
     )
 
     # Create a simple prompt template

@@ -1,7 +1,7 @@
 from langchain_core.tools import tool
 from langgraph.prebuilt import create_react_agent
 from langchain_google_genai import ChatGoogleGenerativeAI
-from ralf.settings import settings
+from ralf.config import RalfConfig
 import ralf.tools as tools
 import os
 
@@ -32,17 +32,20 @@ def done_tool() -> str:
     """Signal that the objective is met and the loop should terminate."""
     return "RALF_DONE"
 
-def create_agent(instruction: str, directory: str):
+def create_agent(instruction: str, directory: str, config: RalfConfig):
     """
     Creates a LangGraph agent with access to tools.
     """
-    if not settings.GOOGLE_API_KEY:
+    if not config.aiclient.google_api_key:
         raise ValueError("GOOGLE_API_KEY environment variable is not set.")
 
+    # Use default model if none specified
+    model_name = config.aiclient.model or "gemini-pro"
+
     llm = ChatGoogleGenerativeAI(
-        model="gemini-pro",
-        google_api_key=settings.GOOGLE_API_KEY,
-        temperature=0
+        model=model_name,
+        google_api_key=config.aiclient.google_api_key.get_secret_value(),
+        temperature=config.aiclient.temperature
     )
 
     agent_tools = [list_files_tool, read_file_tool, write_file_tool, run_command_tool, done_tool]

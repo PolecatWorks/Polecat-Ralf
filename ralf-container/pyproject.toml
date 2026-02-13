@@ -8,14 +8,14 @@ packages = [{include = "ralf"}]
 
 [tool.poetry.dependencies]
 python = "^3.12"
-click = "^8.1.7"
-pydantic-settings = "^2.2.1"
-langchain = "^1.2.10"
-langgraph = "^1.0.8"
-langchain-google-genai = "^4.2.0"
+click = "^8.1"
+pydantic-settings = "^2.2"
+langchain = "^1.2"
+langgraph = "^1.0"
+langchain-google-genai = "^4.2"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^8.1.1"
+pytest = "^8.1"
 
 [tool.poetry.scripts]
 ralf = "ralf.main:cli"

@@ -3,7 +3,9 @@ import os
 # We will import create_agent later when it is implemented
 # from ralf.agent import create_agent
 
-def run_loop(instruction_file: str, directory: str, limit: int):
+from ralf.config import RalfConfig
+
+def run_loop(instruction_file: str, directory: str, limit: int, config: RalfConfig):
     """
     Runs the Ralf loop.
 
@@ -11,6 +13,7 @@ def run_loop(instruction_file: str, directory: str, limit: int):
         instruction_file: Path to the instruction file.
         directory: Working directory.
         limit: Max iterations.
+        config: The Ralf configuration object.
     """
 
     # Verify instruction file exists
@@ -37,7 +40,7 @@ def run_loop(instruction_file: str, directory: str, limit: int):
 
         try:
             # Create a fresh agent for each iteration
-            agent = create_agent(instruction, directory)
+            agent = create_agent(instruction, directory, config)
 
             # Run the agent
             result = agent.invoke({"messages": [("user", "Please execute the instruction.")]})
