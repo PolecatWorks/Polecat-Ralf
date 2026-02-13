@@ -87,8 +87,8 @@ def ask_cmd(ctx, config, secrets, question):
 
 @cli.command(name="loop")
 @shared_options
-@click.argument("instruction_file", type=click.Path())
-@click.option("--directory", "-d", default=".", help="Working directory.")
+@click.argument("instruction_file", type=click.Path(exists=True))
+@click.option("--directory", "-d", type=click.Path(exists=True, writable=True, dir_okay=True), help="Working directory.")
 @click.option("--limit", "-l", default=1, type=int, help="Max iterations.")
 def loop_cmd(ctx, config, secrets, instruction_file, directory, limit):
     """
