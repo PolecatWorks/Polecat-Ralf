@@ -43,7 +43,10 @@ def run_loop(instruction_file: str, directory: str, limit: int, config: RalfConf
             agent = create_agent(instruction, directory, config)
 
             # Run the agent
-            result = agent.invoke({"messages": [("user", "Please execute the instruction.")]})
+            result = agent.invoke(
+                {"messages": [("user", "Please execute the instruction.")]},
+                config={"configurable": {"workdir": os.path.abspath(directory)}}
+            )
 
             # Check if the agent signalled 'done'.
             # We look for a ToolMessage with the content "RALF_DONE"

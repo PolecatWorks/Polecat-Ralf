@@ -32,6 +32,14 @@ def test_run_loop_iterations():
 
             # Verify invoke was called twice
             assert mock_agent.invoke.call_count == 2
+
+            # Verify arguments to invoke
+            # run_loop passes absolute path
+            abs_cwd = os.path.abspath(".")
+            expected_args = {"messages": [("user", "Please execute the instruction.")]}
+            expected_kwargs = {"config": {"configurable": {"workdir": abs_cwd}}}
+            mock_agent.invoke.assert_called_with(expected_args, **expected_kwargs)
+
         finally:
             if os.path.exists(instruction_file):
                 os.remove(instruction_file)
