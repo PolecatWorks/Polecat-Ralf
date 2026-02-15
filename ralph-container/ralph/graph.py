@@ -115,7 +115,7 @@ def run_loop(instruction_file: str, directory: str, limit: int, config: RalphCon
             # Keep track of message count before invoke
             prev_msg_count = len(messages)
 
-            result = agent.invoke({"messages": messages})
+            result = agent.invoke({"messages": messages}, {"configurable": {"workdir": abs_dir}})
 
             # Convert result to AgentState for validation and easier access
             state = AgentState(**result)

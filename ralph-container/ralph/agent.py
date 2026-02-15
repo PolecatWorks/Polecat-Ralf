@@ -171,9 +171,9 @@ def create_single_step_agent(instruction: str, directory: str, config: RalphConf
     # Bind tools to the LLM
     llm_with_tools = llm.bind_tools(agent_tools)
 
-    def agent_node(state: AgentState):
-        messages = [("system", system_prompt)] + state["messages"]
-        response = llm_with_tools.invoke(messages)
+    def agent_node(state: AgentState, config: RunnableConfig):
+        messages = [("system", system_prompt)] + state.messages
+        response = llm_with_tools.invoke(messages, config)
         return {"messages": [response]}
 
     tool_node = ToolNode(agent_tools)
@@ -185,7 +185,7 @@ def create_single_step_agent(instruction: str, directory: str, config: RalphConf
     workflow.add_edge(START, "agent")
 
     def should_continue(state: AgentState):
-        messages = state["messages"]
+        messages = state.messages
         last_message = messages[-1]
         if last_message.tool_calls:
             return "tools"
