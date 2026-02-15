@@ -13,6 +13,10 @@ pydantic-settings = "^2.2"
 langchain = "^1.2"
 langgraph = "^1.0"
 langchain-google-genai = "^4.2"
+langchain-ollama = "^1.0"
+
+grandalf = "^0.8"
+
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^9.0"
