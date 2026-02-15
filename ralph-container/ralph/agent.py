@@ -2,7 +2,7 @@ from langchain_core.tools import tool
 from langgraph.prebuilt import create_react_agent
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.runnables import RunnableConfig
-from ralph.config import RalphConfig
+from ralph.config import RalphConfig, LangchainConfig
 from ralph.state import AgentState
 import os
 import subprocess
@@ -149,18 +149,48 @@ def done(config: RunnableConfig) -> str:
     _get_workdir(config)
     return "RALPH_DONE"
 
+
+def llm_model(config: LangchainConfig):
+
+    match config.model_provider:
+        case "google_genai":
+            from langchain_google_genai import ChatGoogleGenerativeAI
+
+            model = ChatGoogleGenerativeAI(
+                model=config.model,
+                google_api_key=config.google_api_key.get_secret_value(),
+            )
+        case "azure_openai":
+            from langchain_openai import AzureChatOpenAI
+
+            model = AzureChatOpenAI(
+                model=config.model,
+                azure_endpoint=str(config.azure_endpoint),
+                api_version=config.azure_api_version,
+                api_key=config.azure_api_key.get_secret_value(),
+            )
+        case "ollama":
+            from langchain_ollama import ChatOllama
+
+            model = ChatOllama(
+                model=config.model,
+                base_url=config.ollama_base_url,
+            )
+        case _:
+            raise ValueError(f"Unsupported model provider: {config.model_provider}")
+
+    return model
+
+
+
+
+
+
 def _initialize_agent_context(instruction: str, directory: str, config: RalphConfig):
-    if not config.aiclient.google_api_key:
+    if config.aiclient.model_provider == "google_genai" and not config.aiclient.google_api_key:
         raise ValueError("GOOGLE_API_KEY environment variable is not set.")
 
-    # Use default model if none specified
-    model_name = config.aiclient.model or "gemini-pro"
-
-    llm = ChatGoogleGenerativeAI(
-        model=model_name,
-        google_api_key=config.aiclient.google_api_key.get_secret_value(),
-        temperature=config.aiclient.temperature
-    )
+    llm = llm_model(config.aiclient)
 
     agent_tools = [list_files, read_file, write_file, run_command, done, update_prd]
 

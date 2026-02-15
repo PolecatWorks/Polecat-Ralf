@@ -11,6 +11,7 @@ def mock_config():
     # Create a plain MagicMock, avoiding spec issues with Pydantic
     config = MagicMock()
     config.aiclient.google_api_key.get_secret_value.return_value = "fake-key"
+    config.aiclient.model_provider = "google_genai"
     config.aiclient.model = "gemini-pro"
     config.aiclient.temperature = 0
     return config

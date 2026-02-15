@@ -31,7 +31,7 @@ def test_loop_command():
                 mock_msg_1 = AIMessage(content="I am working.")
                 mock_msg_2 = ToolMessage(content="RALPH_DONE", tool_call_id="1")
 
-                def invoke_side_effect(state):
+                def invoke_side_effect(state, *args, **kwargs):
                     msgs = state["messages"]
                     # Convert input dict/tuples to Messages for the return value
                     # In real LangGraph, inputs are processed.
