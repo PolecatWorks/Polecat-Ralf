@@ -44,7 +44,13 @@ def run_loop(instruction_file: str, directory: str, limit: int, config: RalfConf
             agent = create_agent(instruction, directory, config)
 
             # Run the agent
-            result = agent.invoke({"messages": [("user", "Please execute the instruction.")]})
+            result = agent.invoke(
+                {"messages": [("user", "Please execute the instruction.")]},
+                config={"configurable": {"workdir": os.path.abspath(directory)}}
+            )
+
+            # Convert result to AgentState for validation and easier access
+            state = AgentState(**result)
 
             # Convert result to AgentState for validation and easier access
             state = AgentState(**result)
